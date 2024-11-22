@@ -2,13 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
+using UnityEngine.UI;
 
-public class BallShooter : MonoBehaviour
+public class Launcher : MonoBehaviour
 {
     private GameManager gameManager;
     private Rigidbody2D rb;
+    public CinemachineVirtualCamera vcam;
     public GameObject ball;
     public Transform shotPos;
+    public Slider heightS;
+
 
     public float height;
     public float angle;
@@ -22,6 +27,7 @@ public class BallShooter : MonoBehaviour
 
     private void Update()
     {
+        transform.position = new Vector3(0, heightS.value, 0);
         angle = gameManager.angle.value;
         velocity = gameManager.velocity.value;
         Mathf.Clamp(angle, 0, 90);
@@ -34,6 +40,8 @@ public class BallShooter : MonoBehaviour
         gameManager.time = 0;
         gameManager.inAir = true;
         GameObject p = Instantiate(ball, shotPos.position, Quaternion.identity);
-        p.GetComponent<Rigidbody2D>().AddForce(vel);
+        p.GetComponent<Rigidbody2D>().drag = gameManager.drag ? .3f : 0;
+        p.GetComponent<Rigidbody2D>().velocity = vel;
+        vcam.Follow = p.transform;
     }
 }
